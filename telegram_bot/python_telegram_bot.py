@@ -99,7 +99,7 @@ def main():
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("path", path))
-    app.add_handler(CommandHandler("add_repo", add_repo))  # Add this line
+    app.add_handler(CommandHandler("add_repo", add_repo))
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("log", log))
 
