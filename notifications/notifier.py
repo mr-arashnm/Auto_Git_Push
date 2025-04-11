@@ -1,18 +1,20 @@
 from notifications.telegram_bot import TelegramBot
 from notifications.email_notifier import EmailNotifier
 
+
 class Notifier:
     def __init__(self):
         self.telegram_bot = TelegramBot()
-        self.email_notifier = EmailNotifier(
-            smtp_server="smtp.gmail.com",  # یا سرور SMTP دیگر
-            smtp_port=587,
-            sender_email="your_email@gmail.com",
-            sender_password="your_email_password"
-        )
+        self.email_notifier = EmailNotifier()
 
-    def send_telegram_message(self, message):
-        self.telegram_bot.send_message(message)
+    def notify(self, message, send_to=["telegram", "email"], email_recipient=None, email_subject=None):
 
-    def send_email(self, recipient_email, subject, body):
-        self.email_notifier.send_email(recipient_email, subject, body)
+        if "telegram" in send_to:
+            self.telegram_bot.send_message(message)
+
+        if "email" in send_to and email_recipient:
+            self.email_notifier.send_email(
+                recipient_email=email_recipient,
+                subject=email_subject or "Notification",
+                body=message
+            )
