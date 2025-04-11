@@ -1,29 +1,41 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import os
+import subprocess
+import re
 
 
 BOT_TOKEN = "8067735833:AAEISZS2wtx_ON6miGfs6axJlwWRFABzn-E"
+user_path = os.path.expanduser("~")
+
 
 def scanner(repos_file):
     if not os.path.isfile(repos_file):
-        massage =(f"❌ File not found: {repos_file}")
-        return massage
+        message =(f"❌ File not found: {repos_file}")
+        return message
 
     with open(repos_file, "r") as f:
         repos = [line.strip() for line in f if line.strip() and not line.startswith("#")]
     if not repos:
-        massage =("⚠️ Warning: The repos.txt file is empty (only comments or blank lines). Please add your git repositories.")
+        message =("⚠️ Warning: The repos.txt file is empty (only comments or blank lines). Please add your git repositories.")
         # Optionally reset the file with sample content
         with open(repos_file, "w") as f:
             f.write("# Add your git repositories here\n")
             f.write("# Example: /path/to/your/repo\n")
-        return massage
+        return message
     
-    massage = ""
+    message = ""
     for path in repos:
-        massage += path + '\n'
-    return massage
+        Home_path = path.replace(user_path, "", 1)
+        result = subprocess.run(["git", "-C", path, "remote", "get-url", "main"],
+                                capture_output=True, text=True)
+        if result.returncode == 0:
+            url = result.stdout.strip()
+            message += f"<a href=\"{path}\"><b>{Home_path}</b></a> ➜ <a href=\"{url}\">link</a>\n"
+        else:
+            message += f"<a href=\"{path}\"><b>{Home_path}</b></a> ➜ <i>remote not found</i>\n"
+
+    return message
 
 #   /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -31,7 +43,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 #   /path
 async def path(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(scanner(os.path.expanduser("~/auto_git_pusher/config/repos.txt")))
+    await update.message.reply_text(scanner(os.path.expanduser("~/auto_git_pusher/config/repos.txt")), parse_mode='HTML')
     
     
 #   /add_repo
@@ -65,11 +77,21 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
 #   /log
 async def log(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    log_file = os.path.expanduser("~/auto_git_pusher/config/repos.txt")
-    with open(log_file, "a") as f:
-            f.readlines()
-    await update.message.reply_text(os.cat(log_file))
-    await update.message.reply_text()
+    log_file = ("~/.local/share/Auto_Git_Pusher/logs/run.log")
+    
+    # check foe exist
+    if not os.path.isfile(log_file):
+        await update.message.reply_text("❌ Log file not found.")
+        return
+
+    # read file
+    with open(log_file, "r") as f:
+        log_content = f.read()
+
+    # send
+    await update.message.reply_text(log_content.strip())
+
+
 
 # setting bot application
 def main():
