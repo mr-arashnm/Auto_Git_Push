@@ -2,3 +2,4 @@
 # Example: /path/to/your/repo
 /home/try/Documents/university/AI
 /home/try/Documents/university/DB
+/home/try/auto_git_pusher
