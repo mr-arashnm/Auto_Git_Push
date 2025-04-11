@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Auto-Updater Configuration</title>
+    <title>Auto Git Pusher</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -66,7 +66,7 @@
             <div class="px-8 py-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-bold text-white">GitHub Auto-Updater</h1>
+                        <h1 class="text-3xl font-bold text-white">Auto Git Pusher</h1>
                         <p class="text-indigo-200 mt-1">Configure your repository update settings</p>
                     </div>
                     <div class="flex items-center space-x-4">
@@ -110,13 +110,6 @@
                         <label for="telegram-id" class="block text-sm font-medium text-gray-700 dark:text-dark-300 mb-1">Telegram ID</label>
                         <input type="text" id="telegram-id" placeholder="Your Telegram user ID" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-700 dark:bg-dark-800 dark:text-dark-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500">
                     </div>
-                    <div>
-                        <label for="bot-link" class="block text-sm font-medium text-gray-700 dark:text-dark-300 mb-1">Bot Link</label>
-                        <input type="url" id="bot-link" placeholder="https://t.me/your_bot" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-700 dark:bg-dark-800 dark:text-dark-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500">
-                        <div id="bot-link-display" class="mt-2 text-sm text-gray-500 dark:text-dark-400 hidden">
-                            <span class="font-medium">Bot Link:</span> <span id="bot-link-value"></span>
-                        </div>
-                    </div>
                     <div class="flex items-center justify-between pt-2">
                         <span class="text-sm font-medium text-gray-700 dark:text-dark-300">Enable Telegram Notifications</span>
                         <div class="relative inline-block w-10 mr-2 align-middle select-none">
@@ -134,15 +127,6 @@
                 </div>
                 <div class="p-6 space-y-4">
                     <div>
-                        <label for="github-link" class="block text-sm font-medium text-gray-700 dark:text-dark-300 mb-1">GitHub Repository</label>
-                        <div class="flex">
-                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 dark:border-dark-700 bg-gray-100 dark:bg-dark-800 text-gray-500 dark:text-dark-400 text-sm">
-                                https://github.com/
-                            </span>
-                            <input type="text" id="github-link" placeholder="username/repo" class="flex-1 px-4 py-2 border border-gray-300 dark:border-dark-700 dark:bg-dark-800 dark:text-dark-100 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500">
-                        </div>
-                    </div>
-                    <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 dark:text-dark-300 mb-1">Email Address</label>
                         <input type="email" id="email" placeholder="your@email.com" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-700 dark:bg-dark-800 dark:text-dark-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500">
                     </div>
@@ -157,28 +141,6 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-dark-900 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-dark-700">
-            <div class="border-b border-gray-200 dark:border-dark-700 px-6 py-4">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-dark-200">Notification Preferences</h2>
-                <p class="text-gray-500 dark:text-dark-400 text-sm mt-1">Choose how you want to receive updates</p>
-            </div>
-            <div class="p-6">
-                <div class="space-y-4">
-                    <div class="flex items-center">
-                        <input type="radio" id="notify-both" name="notification" value="both" class="h-4 w-4 text-green-600 focus:ring-green-500 dark:focus:ring-green-500">
-                        <label for="notify-both" class="ml-3 block text-sm font-medium text-gray-700 dark:text-dark-300">Both Email and Telegram</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="notify-email" name="notification" value="email" class="h-4 w-4 text-green-600 focus:ring-green-500 dark:focus:ring-green-500">
-                        <label for="notify-email" class="ml-3 block text-sm font-medium text-gray-700 dark:text-dark-300">Email Only</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="notify-telegram" name="notification" value="telegram" class="h-4 w-4 text-green-600 focus:ring-green-500 dark:focus:ring-green-500">
-                        <label for="notify-telegram" class="ml-3 block text-sm font-medium text-gray-700 dark:text-dark-300">Telegram Only</label>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="mt-8 flex justify-end">
             <button onclick="saveSettings()" class="gradient-bg hover:opacity-90 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-200 flex items-center">
@@ -290,20 +252,20 @@
             // Get all paths
             const pathElements = document.querySelectorAll('#paths-container .path-item span');
             const paths = Array.from(pathElements).map(el => el.textContent);
-            
+
             // Get Telegram settings
             const telegramId = document.getElementById('telegram-id').value;
             const botLink = document.getElementById('bot-link').value;
             const telegramEnabled = document.getElementById('telegram-toggle').checked;
-            
+
             // Get GitHub and email settings
             const githubRepo = document.getElementById('github-link').value;
             const email = document.getElementById('email').value;
             const emailEnabled = document.getElementById('email-toggle').checked;
-            
+
             // Get notification preference
             const notificationPreference = document.querySelector('input[name="notification"]:checked').value;
-            
+
             // Create settings object
             const settings = {
                 paths,
@@ -319,12 +281,29 @@
                 },
                 notificationPreference
             };
-            
-            // In a real app, you would send this to your backend
+
+            // Send paths to the server to save in repos.txt
+            fetch('/save-paths', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ paths })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Configuration and paths saved successfully!');
+                } else {
+                    alert('Failed to save paths.');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving paths:', error);
+                alert('An error occurred while saving paths.');
+            });
+
+            // Log settings for debugging
             console.log('Saving settings:', settings);
-            
-            // Show success message
-            alert('Configuration saved successfully!');
         }
     </script>
 </body>
