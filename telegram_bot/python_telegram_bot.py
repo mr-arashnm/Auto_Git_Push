@@ -1,5 +1,5 @@
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram import Update # type: ignore
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes # type: ignore
 import os
 import subprocess
 import re
