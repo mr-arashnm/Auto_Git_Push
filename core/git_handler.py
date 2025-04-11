@@ -1,7 +1,7 @@
 import subprocess
 import os
 from datetime import datetime
-from notifications.logger import log
+from utils.logger import log
 
 def handle_git_repo(repo_path):
     log(f"🔍 Checking {repo_path}")
