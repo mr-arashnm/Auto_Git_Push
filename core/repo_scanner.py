@@ -1,10 +1,10 @@
 import os
 from core.git_handler import handle_git_repo
-from utils.logger import log
+from notifications.logger import log
 
 def scan_and_push(repos_file):
     if not os.path.isfile(repos_file):
-        log(f"❌ File not found: {repos_file}")
+        print(f"❌ File not found: {repos_file}")
         return
 
     with open(repos_file, "r") as f:
@@ -22,4 +22,4 @@ def scan_and_push(repos_file):
         if os.path.isdir(os.path.join(repo, ".git")):
             handle_git_repo(repo)
         else:
-            log(f"⚠️ Not a git repo: {repo}")
+            print(f"⚠️ Not a git repo: {repo}")
