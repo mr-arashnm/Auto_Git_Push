@@ -1,0 +1,4 @@
+# Add your git repositories here
+# Example: /path/to/your/repo
+/home/try/Documents/university/AI
+/home/try/Documents/university/DB
