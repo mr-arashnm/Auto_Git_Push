@@ -14,9 +14,9 @@ def get_log_path():
 
 LOG_FILE = get_log_path()
 
-# رمزگشایی مقادیر
+# decoding
 TELEGRAM_BOT_TOKEN = base64.b64decode(ENCODED_BOT_TOKEN).decode("utf-8")
-TELEGRAM_CHAT_ID = base64.b64decode(ENCODED_CHAT_ID).decode("utf-8")
+TELEGRAM_CHAT_ID = base64.b64dec    ode(ENCODED_CHAT_ID).decode("utf-8")
 
 def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
