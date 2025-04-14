@@ -1,0 +1,28 @@
+.gradient-bg {
+    background: linear-gradient(135deg, #5c4d79 0%, #2b5d84 100%);
+}
+.path-item {
+    transition: all 0.3s ease;
+}
+.path-item:hover {
+    transform: translateY(-2px);
+}
+.toggle-checkbox:checked {
+    right: 0;
+    background-color: #347d39;
+}
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #46954a;
+}
+.dark-input {
+    background-color: rgba(99, 110, 123, 0.1);
+    border-color: #444c56;
+    color: #cdd9e5;
+}
+.dark-input:focus {
+    border-color: #347d39;
+    box-shadow: 0 0 0 2px rgba(52, 125, 57, 0.3);
+}
+.dark-input::placeholder {
+    color: #636e7b;
+}
