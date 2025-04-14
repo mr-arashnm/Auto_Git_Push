@@ -6,6 +6,84 @@ from utils.validator import validate_repo_path
 
 app = Flask(__name__)
 
+@app.route('/save-accounts', methods=['POST'])
+def save_accounts():
+    data = request.json
+    telegram_chat_id = data.get('telegram_chat_id', '')
+    email_username = data.get('email_username', '')
+
+    # به‌روزرسانی فایل settings.py
+    with open(os.path.expanduser("~/auto_git_pusher/config/settings.py"), "r") as f:
+        lines = f.readlines()
+
+    with open(os.path.expanduser("~/auto_git_pusher/config/settings.py"), "w") as f:
+        for line in lines:
+            if line.startswith("TELEGRAM_CHAT_ID"):
+                f.write(f'TELEGRAM_CHAT_ID = "{telegram_chat_id}"\n')
+            elif line.startswith("EMAIL_USERNAME"):
+                f.write(f'EMAIL_USERNAME = "{email_username}"\n')
+            else:
+                f.write(line)
+
+    log(f"Accounts updated: Telegram ID = {telegram_chat_id}, Email = {email_username}.")
+    return jsonify({"message": "Accounts updated successfully!"})
+
+@app.route('/get-accounts', methods=['GET'])
+def get_accounts():
+    from config.settings import TELEGRAM_CHAT_ID, EMAIL_USERNAME
+    return jsonify({
+        "telegram_chat_id": TELEGRAM_CHAT_ID,
+        "email_username": EMAIL_USERNAME
+    })
+
+@app.route('/save-telegram-notifications', methods=['POST'])
+def save_telegram_notifications():
+    data = request.json
+    telegram_notifications_enabled = data.get('enabled', False)
+
+    # به‌روزرسانی فایل settings.py
+    with open(os.path.expanduser("~/auto_git_pusher/config/settings.py"), "r") as f:
+        lines = f.readlines()
+
+    with open(os.path.expanduser("~/auto_git_pusher/config/settings.py"), "w") as f:
+        for line in lines:
+            if line.startswith("TELEGRAM_NOTIFICATIONS_ENABLED"):
+                f.write(f'TELEGRAM_NOTIFICATIONS_ENABLED = {telegram_notifications_enabled}\n')
+            else:
+                f.write(line)
+
+    log(f"Telegram notifications updated to {telegram_notifications_enabled}.")
+    return jsonify({"message": "Telegram notifications updated successfully!"})
+
+@app.route('/get-telegram-notifications', methods=['GET'])
+def get_telegram_notifications():
+    from config.settings import TELEGRAM_NOTIFICATIONS_ENABLED
+    return jsonify({"enabled": TELEGRAM_NOTIFICATIONS_ENABLED})
+
+@app.route('/save-email-notifications', methods=['POST'])
+def save_email_notifications():
+    data = request.json
+    email_notifications_enabled = data.get('enabled', False)
+
+    # به‌روزرسانی فایل settings.py
+    with open(os.path.expanduser("~/auto_git_pusher/config/settings.py"), "r") as f:
+        lines = f.readlines()
+
+    with open(os.path.expanduser("~/auto_git_pusher/config/settings.py"), "w") as f:
+        for line in lines:
+            if line.startswith("EMAIL_NOTIFICATIONS_ENABLED"):
+                f.write(f'EMAIL_NOTIFICATIONS_ENABLED = {email_notifications_enabled}\n')
+            else:
+                f.write(line)
+
+    log(f"Email notifications updated to {email_notifications_enabled}.")
+    return jsonify({"message": "Email notifications updated successfully!"})
+
+@app.route('/get-email-notifications', methods=['GET'])
+def get_email_notifications():
+    from config.settings import EMAIL_NOTIFICATIONS_ENABLED
+    return jsonify({"enabled": EMAIL_NOTIFICATIONS_ENABLED})
+
 # API برای دریافت تم
 @app.route('/get-theme', methods=['GET'])
 def get_theme():

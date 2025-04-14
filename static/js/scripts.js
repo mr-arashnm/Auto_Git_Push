@@ -1,3 +1,131 @@
+
+// Save accounts (Telegram and Email) to the server
+function saveAccounts() {
+    const telegramChatId = document.getElementById('telegram-id').value.trim();
+    const emailUsername = document.getElementById('email').value.trim();
+
+    fetch('/save-accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            telegram_chat_id: telegramChatId,
+            email_username: emailUsername
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(error => console.error('Error saving accounts:', error));
+}
+
+// Load accounts (Telegram and Email) from the server
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/get-accounts')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('telegram-id').value = data.telegram_chat_id || '';
+            document.getElementById('email').value = data.email_username || '';
+        })
+        .catch(error => console.error('Error fetching accounts:', error));
+});
+
+// Save telegram notifications status to the server
+document.getElementById('telegram-toggle').addEventListener('change', function () {
+    const enabled = this.checked;
+
+    fetch('/save-telegram-notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled })
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.message))
+    .catch(error => console.error('Error saving telegram notifications:', error));
+});
+
+// Load telegram notifications status from the server
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/get-telegram-notifications')
+        .then(response => response.json())
+        .then(data => {
+            const telegramToggle = document.getElementById('telegram-toggle');
+            telegramToggle.checked = data.enabled;
+        })
+        .catch(error => console.error('Error fetching telegram notifications status:', error));
+});
+
+// Remove a path from the UI and update the server
+function removePath(button) {
+    const pathItem = button.closest('.path-item');
+    const path = pathItem.querySelector('span').textContent;
+
+    // Remove the path from the UI
+    pathItem.remove();
+
+    // Update the server with the new list of paths
+    const pathElements = document.querySelectorAll('#paths-container .path-item span');
+    const paths = Array.from(pathElements).map(el => el.textContent);
+
+    fetch('/save-paths', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paths })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log(`Path "${path}" removed successfully.`);
+        } else {
+            console.error(`Failed to remove path "${path}".`);
+        }
+    })
+    .catch(error => console.error('Error updating paths:', error));
+}
+
+// Save email notifications status to the server
+document.getElementById('email-toggle').addEventListener('change', function () {
+    const enabled = this.checked;
+
+    fetch('/save-email-notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled })
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.message))
+    .catch(error => console.error('Error saving email notifications:', error));
+});
+
+// Load email notifications status from the server
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/get-email-notifications')
+        .then(response => response.json())
+        .then(data => {
+            const emailToggle = document.getElementById('email-toggle');
+            emailToggle.checked = data.enabled;
+        })
+        .catch(error => console.error('Error fetching email notifications status:', error));
+});
+
+// Add a new path when Enter is pressed
+document.getElementById('new-path').addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // جلوگیری از رفتار پیش‌فرض (مثل ارسال فرم)
+        addPath();
+    }
+});
+
+// Add a new path
+function addPath() {
+    const pathInput = document.getElementById('new-path');
+    const path = pathInput.value.trim();
+
+    if (path) {
+        addPathToUI(path, false); // فرض می‌کنیم مسیر جدید هنوز ولید نیست
+        pathInput.value = ''; // پاک کردن فیلد ورودی
+    }
+}
+
 // Save theme to the server
 function saveTheme(theme) {
     fetch('/save-theme', {
@@ -16,11 +144,11 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('/get-theme')
         .then(response => response.json())
         .then(data => {
-            const theme = data.theme || 'dark';
+            const theme = data.theme || 'light';
             const html = document.documentElement;
             const themeIcon = document.getElementById('theme-icon');
 
-            if (theme === 'dark') {light
+            if (theme === 'dark') {
                 html.classList.add('dark');
                 themeIcon.classList.replace('fa-moon', 'fa-sun');
             } else {
