@@ -104,5 +104,21 @@
     </div>
 
     <script src="/static/js/scripts.js"></script>
+    <script>
+        const themeIcon = document.getElementById('theme-icon');
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        // Toggle theme
+        themeToggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        if (html.classList.contains('dark')) {
+            localStorage.setItem('theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+            localStorage.setItem('theme', 'light');
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+        });
+    </script>
 </body>
 </html>
