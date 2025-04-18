@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body class="bg-gray-50 dark:bg-dark-950 min-h-screen transition-colors duration-200">
     <div class="container mx-auto px-4 py-12 max-w-4xl">
@@ -19,7 +21,7 @@
                     </div>
                     <div class="flex items-center space-x-4">
                         <button id="theme-toggle" class="bg-white/20 p-3 rounded-full text-white">
-                            <i class="fas fa-moon" id="theme-icon"></i>
+                            <i class="fas fa-moon" id="get-theme"></i>
                         </button>
                         <a href="https://github.com/mr-arashnm/Auto_Git_Push" target="_blank" rel="noopener noreferrer">
                             <div class="bg-white/20 p-3 rounded-full">
@@ -61,7 +63,7 @@
                 <div class="p-6 space-y-4">
                     <div>
                         <label for="telegram-id" class="block text-sm font-medium text-gray-700 dark:text-dark-300 mb-1">Telegram ID</label>
-                        <input type="text" id="telegram-id" placeholder="Your Telegram user ID" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-700 dark:bg-dark-800 dark:text-dark-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500">
+                        <input type="text" id="telegram-id" placeholder="Enter Telegram Chat ID" class="w-full px-4 py-2 border border-gray-300 dark:border-dark-700 dark:bg-dark-800 dark:text-dark-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-500">
                     </div>
                     <div class="flex items-center justify-between pt-2">
                         <span class="text-sm font-medium text-gray-700 dark:text-dark-300">Enable Telegram Notifications</span>
@@ -108,15 +110,28 @@
         const themeIcon = document.getElementById('theme-icon');
         const themeToggle = document.getElementById('theme-toggle');
         const html = document.documentElement;
-        // Toggle theme
-        themeToggle.addEventListener('click', () => {
-        html.classList.toggle('dark');
-        if (html.classList.contains('dark')) {
-            localStorage.setItem('theme', 'dark');
+    
+        // بررسی تم ذخیره‌شده یا استفاده از ترجیح سیستم
+        if (
+            localStorage.getItem('theme') === 'dark' || 
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+            html.classList.add('dark');
             themeIcon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-            localStorage.setItem('theme', 'light');
+        } else {
+            html.classList.remove('dark');
             themeIcon.classList.replace('fa-sun', 'fa-moon');
+        }
+    
+        // تغییر تم با کلیک روی دکمه
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
             }
         });
     </script>

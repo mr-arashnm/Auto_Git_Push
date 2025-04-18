@@ -160,14 +160,16 @@ function loadEmailSettings() {
 }
 
 // Load theme
+function loadTheme() {
+    const theme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    themeIcon.classList.toggle('fa-sun', theme === 'dark');
+    themeIcon.classList.toggle('fa-moon', theme !== 'dark');
+}
+// Load theme on page load
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('/get-theme')
-        .then(response => response.json())
-        .then(data => {
-            const theme = data.theme || 'light';
-            document.documentElement.classList.toggle('dark', theme === 'dark');
-        })
-        .catch(error => console.error('Error fetching theme:', error));
+    loadTheme();
+    getTheme();
 });
 
 // Load settings on page load

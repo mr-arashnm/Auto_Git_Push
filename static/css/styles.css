@@ -26,3 +26,16 @@
 .dark-input::placeholder {
     color: #636e7b;
 }
+
+body.dark {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark .bg-dark-950 {
+    background-color: #22272e;
+}
+
+.dark .text-dark-200 {
+    color: #cdd9e5;
+}
