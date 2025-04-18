@@ -1,14 +1,14 @@
 import os
 from core.git_handler import handle_git_repo
-from core.repo_config import read_settings
+from core.repo_config import read_repo_config
 from utils.logger import log
 
 def process_repositories():
     """
-    Process all repositories based on the settings.
+    Process all repositories based on the repos
     """
-    settings = read_settings()
-    repositories = settings.get("repositories", [])
+    repos = read_repo_config()
+    repositories = repos.get("repositories", [])
 
     for repo in repositories:
         repo_path = repo.get("path")
