@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template # type: ignore
 import os, json
 from utils.logger import log
 from utils.validator import validate_repo_path
+from core.repo_config import read_repo_config, write_repo_config
 
 app = Flask(__name__)
 
@@ -43,18 +44,39 @@ def index():
 
 @app.route('/get-paths', methods=['GET'])
 def get_paths():
-    repos = read_file(SETTINGS_FILE)
-    if request.method == 'GET':
-        return jsonify({
-            "repos": repos.get("REPOS_FILE", [])
-        })
+    repos = read_repo_config()
+    repositories = repos.get("repositories", [])
+    repo_paths = []
+    for repo in repositories:
+        path = repo.get("path")
+        actions = repo.get("actions", [])
+        is_valid = validate_repo_path(path)
+        repo_paths.append({"path": path, "is_valid": is_valid, "actions": actions})
+        
+    return jsonify(repo_paths)
         
 @app.route('/save-paths', methods=['POST'])
 def save_paths():
-    paths = request.json.get('paths', [])
-    write_repos_file(paths)
-    log("Paths updated successfully.")
-    return jsonify({"message": "Paths saved successfully!"})
+    """
+    Save repository paths and actions to the repos.json file.
+    """
+    data = request.json
+    path = data.get("path")
+    actions = data.get("actions", [])
+    # read path
+    repos = read_repo_config()
+    repositories = repos.get("repositories", [])
+
+    # add new path 
+    repositories.append({
+        "path": path,
+        "actions": [action["action"] for action in actions if action["isActive"]]
+    })
+
+    # save path 
+    write_repo_config({"repositories": repositories})
+    log(f"✅ Repository path add: {path}")
+    return jsonify({"message": "Path and actions added successfully!"})
 
 # Telegram settings (account + notifications)
 @app.route('/telegram-settings', methods=['GET', 'POST'])
@@ -62,15 +84,15 @@ def telegram_settings():
     settings = read_file(SETTINGS_FILE)
     if request.method == 'GET':
         return jsonify({
-            "telegram_chat_id": settings.get("TELEGRAM_CHAT_ID", ""),
-            "notifications_enabled": settings.get("TELEGRAM_NOTIFICATIONS_ENABLED", False)
+            "telegram_chat_id": settings.get("TELEGRAM_CHAT_ID"),
+            "notifications_enabled": settings.get("TELEGRAM_NOTIFICATIONS_ENABLED")
         })
     elif request.method == 'POST':
         data = request.json
-        settings["TELEGRAM_CHAT_ID"] = data.get("telegram_chat_id", "")
-        settings["TELEGRAM_NOTIFICATIONS_ENABLED"] = data.get("notifications_enabled", False)
+        chat_id = data.get("telegram_chat_id")
+        telegram_notification = data.get("notifications_enabled")
         save_settings_file(settings)
-        log(f"Telegram settings updated: Chat ID = {settings['TELEGRAM_CHAT_ID']}, Notifications = {settings['TELEGRAM_NOTIFICATIONS_ENABLED']}.")
+        log(f"Telegram settings updated: Chat ID = {chat_id}, Notifications = {telegram_notification}.")
         return jsonify({"message": "Telegram settings updated successfully!"})
 
 # Email settings (account + notifications)
@@ -79,8 +101,8 @@ def email_settings():
     settings = read_file(SETTINGS_FILE)
     if request.method == 'GET':
         return jsonify({
-            "email_username": settings.get("EMAIL_USERNAME", ""),
-            "notifications_enabled": settings.get("EMAIL_NOTIFICATIONS_ENABLED", False)
+            "email_username": settings.get("EMAIL_USERNAME"),
+            "notifications_enabled": settings.get("EMAIL_NOTIFICATIONS_ENABLED")
         })
     elif request.method == 'POST':
         data = request.json
